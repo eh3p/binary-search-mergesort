@@ -1,0 +1,103 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+void merge(vector<int>& arr, int left, int mid, int right) {
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+
+    vector<int> L(n1), R(n2);
+
+    for (int i = 0; i < n1; i++)
+        L[i] = arr[left + i];
+    for (int j = 0; j < n2; j++)
+        R[j] = arr[mid + 1 + j];
+
+    int i = 0, j = 0, k = left;
+
+    while (i < n1 && j < n2) {
+        if (L[i] <= R[j]) {
+            arr[k] = L[i];
+            i++;
+        } else {
+            arr[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+
+    while (i < n1) {
+        arr[k] = L[i];
+        i++;
+        k++;
+    }
+
+    while (j < n2) {
+        arr[k] = R[j];
+        j++;
+        k++;
+    }
+}
+
+void merge_sort(vector<int>& arr, int left, int right) {
+    if (left < right) {
+        int mid = left + (right - left) / 2;
+
+        merge_sort(arr, left, mid);
+        merge_sort(arr, mid + 1, right);
+        merge(arr, left, mid, right);
+    }
+}
+
+int binary_search(const vector<int>& arr, int target) {
+    int left = 0, right = arr.size() - 1;
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        if (arr[mid] == target)
+            return mid;
+        else if (arr[mid] < target)
+            left = mid + 1;
+        else
+            right = mid - 1;
+    }
+    return -1;
+}
+
+int search_number(vector<int>& arr, int target) {
+    // Check if the array is sorted
+    if (!is_sorted(arr.begin(), arr.end())) {
+        merge_sort(arr, 0, arr.size() - 1);
+    }
+    return binary_search(arr, target);
+}
+
+int main() {
+    vector<int> array;
+    int numCount, number;
+
+    cout << "by Ehab Ashraf : id : 222050022 \n";
+    cout << "Enter the number of elements you want to input: ";
+    cin >> numCount;
+
+    cout << "Enter " << numCount << " numbers:\n";
+    for (int i = 0; i < numCount; i++) {
+        cin >> number;
+        array.push_back(number);
+    }
+
+    int user_input;
+    cout << "Enter a number to search for: ";
+    cin >> user_input;
+
+    int index = search_number(array, user_input);
+
+    if (index != -1) {
+        cout << "Number found at index: " << index << endl;
+    } else {
+        cout << "Number not found in the array." << endl;
+    }
+
+    return 0;
+}
